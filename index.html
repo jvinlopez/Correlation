@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pearson Correlation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #282c34;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            background: #333;
+            border: 3px solid #444;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 80px;
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .input-group label {
+            white-space: nowrap;
+        }
+        .input-group input {
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background: #444;
+            color: #fff;
+        }
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+            background: #444;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        table th, table td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: center;
+            color: #fff;
+        }
+        table th {
+            background: #555;
+        }
+        table th input {
+            width: 100%;
+            background: #555;
+            border: 1px solid #666;
+            border-radius: 4px;
+            color: #fff;
+            text-align: center;
+        }
+        table td input {
+            width: 100%;
+            background: #555;
+            border: 1px solid #666;
+            border-radius: 4px;
+            color: #fff;
+            text-align: center;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+            background: #444;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .results h3 {
+            margin-bottom: 10px;
+        }
+        .results p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo" style="position: relative;">
+            <a href="#" style="position: absolute; top: 0; left: 0; text-decoration: none; color: white; font-size: 24px;" title="Home">🏠</a>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhp3VrJcYLqPjT3fqtguwljuRFKfUzEtxam1T8dacAkDQIybluvRygnnW1WgY6hEr8Xdck-zrKpmoUbkqYwcv3TH7bdddYBIQMOY3CpsSm9ulcgQ_FLQyAkyhtfcujjIl1Q5Txm98pxyNNCFLHvQKM_9Iiha5a3Dc6wLO0wGrUYgfXb46JJfeOdXYqjBfI/w128-h128-p-k-no-nu/excellix.jpg" alt="Logo">
+        </div>
+        <h1>Regression Analysis Tool</h1>
+
+        <div class="input-group">
+            <label for="variableCount">Number of Variables:</label>
+            <input type="number" id="variableCount" min="1" max="50" value="12" onchange="updateTable()">
+
+            <label for="confidenceLevel">Confidence Level:</label>
+            <select id="confidenceLevel">
+                <option value="0.90">90%</option>
+                <option value="0.95" selected>95%</option>
+                <option value="0.99">99%</option>
+            </select>
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th><input type="text" id="xHeader" value="X" oninput="updateHeaders()"></th>
+                    <th><input type="text" id="yHeader" value="Y" oninput="updateHeaders()"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be generated dynamically -->
+            </tbody>
+        </table>
+
+        <button class="button" onclick="performRegression()">Run Regression</button>
+
+        <div id="results" class="results" style="display: none;">
+            <h3>Results</h3>
+            <p id="equation"></p>
+            <p id="rSquared"></p>
+            <p id="intermediateCalculations"></p>
+            <p id="significance"></p>
+            <p id="conclusion"></p>
+        </div>
+    </div>
+
+    <script>
+        function updateTable() {
+            const variableCount = parseInt(document.getElementById('variableCount').value);
+            const tableBody = document.getElementById('dataTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            for (let i = 0; i < variableCount; i++) {
+                const row = document.createElement('tr');
+
+                const xCell = document.createElement('td');
+                const xInput = document.createElement('input');
+                xInput.type = 'number';
+                xInput.placeholder = `X${i + 1}`;
+                xCell.appendChild(xInput);
+                row.appendChild(xCell);
+
+                const yCell = document.createElement('td');
+                const yInput = document.createElement('input');
+                yInput.type = 'number';
+                yInput.placeholder = `Y${i + 1}`;
+                yCell.appendChild(yInput);
+                row.appendChild(yCell);
+
+                tableBody.appendChild(row);
+            }
+        }
+
+        function updateHeaders() {
+            const xHeader = document.getElementById('xHeader').value || 'X';
+            const yHeader = document.getElementById('yHeader').value || 'Y';
+        }
+
+        function getRelationshipStrength(r) {
+            if (Math.abs(r) === 0) return "no";
+            if (Math.abs(r) > 0 && Math.abs(r) <= 0.2) return "weak";
+            if (Math.abs(r) > 0.2 && Math.abs(r) <= 0.5) return "moderate";
+            if (Math.abs(r) > 0.5 && Math.abs(r) <= 0.8) return "high";
+            if (Math.abs(r) > 0.8 && Math.abs(r) <= 1.0) return "very high";
+            return "unknown";
+        }
+
+        function performRegression() {
+            const confidenceLevel = parseFloat(document.getElementById('confidenceLevel').value);
+            const tableRows = document.getElementById('dataTable').querySelectorAll('tbody tr');
+            const xHeader = document.getElementById('xHeader').value || 'X';
+            const yHeader = document.getElementById('yHeader').value || 'Y';
+
+            const xValues = [], yValues = [];
+
+            tableRows.forEach(row => {
+                const xInput = row.cells[0].querySelector('input').value;
+                const yInput = row.cells[1].querySelector('input').value;
+
+                if (xInput !== '' && yInput !== '') {
+                    xValues.push(parseFloat(xInput));
+                    yValues.push(parseFloat(yInput));
+                }
+            });
+
+            if (xValues.length < 2 || yValues.length < 2) {
+                alert('Please provide at least two valid data points.');
+                return;
+            }
+
+            const n = xValues.length;
+            const meanX = xValues.reduce((sum, x) => sum + x, 0) / n;
+            const meanY = yValues.reduce((sum, y) => sum + y, 0) / n;
+
+            let covariance = 0, varianceX = 0, varianceY = 0;
+            for (let i = 0; i < n; i++) {
+                covariance += (xValues[i] - meanX) * (yValues[i] - meanY);
+                varianceX += Math.pow(xValues[i] - meanX, 2);
+                varianceY += Math.pow(yValues[i] - meanY, 2);
+            }
+
+            const slope = covariance / varianceX;
+            const intercept = meanY - slope * meanX;
+            const r = covariance / Math.sqrt(varianceX * varianceY);
+
+            let ssTotal = 0, ssResidual = 0;
+            for (let i = 0; i < n; i++) {
+                const predictedY = slope * xValues[i] + intercept;
+                ssTotal += Math.pow(yValues[i] - meanY, 2);
+                ssResidual += Math.pow(yValues[i] - predictedY, 2);
+            }
+
+            const rSquared = 1 - (ssResidual / ssTotal);
+
+            // Test of significance
+            const tStat = r / Math.sqrt((1 - r * r) / (n - 2));
+            const criticalValue = getCriticalValue(confidenceLevel, n - 2);
+
+            const significance = Math.abs(tStat) > criticalValue ? 'significant' : 'not significant';
+            const relationshipStrength = getRelationshipStrength(r);
+            const relationshipDirection = r > 0 ? 'positive' : 'negative';
+            const conclusion = `Therefore, we ${significance === 'significant' ? 'reject' : 'accept'} the null hypothesis. ${xHeader} has a ${significance} (${relationshipStrength}, ${relationshipDirection}) relationship with ${yHeader} at a ${confidenceLevel * 100}% confidence level.`;
+
+            // Display results
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('equation').innerText = `Regression Equation: ${yHeader} = ${intercept.toFixed(2)} + ${slope.toFixed(2)}(${xHeader})`;
+            document.getElementById('rSquared').innerText = `R-squared: ${rSquared.toFixed(4)}`;
+            document.getElementById('intermediateCalculations').innerText = `Intermediate Calculations: r = ${r.toFixed(4)}, t = ${tStat.toFixed(2)}, df = ${n - 2}`;
+            document.getElementById('significance').innerText = `The relationship is ${significance} (t = ${tStat.toFixed(2)}, critical t = ${criticalValue}).`;
+            document.getElementById('conclusion').innerText = conclusion;
+        }
+
+        function getCriticalValue(confidenceLevel, degreesOfFreedom) {
+            // Approximate critical t-values for common confidence levels
+            const tTable = {
+                0.90: 1.645,
+                0.95: 2.064,
+                0.99: 2.576
+            };
+            return tTable[confidenceLevel] || 1.960; // Default to 95%
+        }
+
+        // Initialize table rows
+        updateTable();
+    </script>
+</body>
+</html>
