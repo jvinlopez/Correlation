@@ -29,6 +29,44 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             position: relative;
         }
+        /* Top icons navigation */
+        .top-icons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .top-icons a {
+            text-decoration: none;
+            color: white;
+            font-size: 24px;
+        }
+        /* Hidden menu styling */
+        .menu {
+            display: none;
+            background: #444;
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            left: 5px;
+            top: 50px;
+            z-index: 1000;
+        }
+        .menu ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu ul li {
+            margin-bottom: 5px;
+        }
+        .menu ul li a {
+            color: #00bfff;
+            text-decoration: none;
+        }
+        .menu ul li a:hover {
+            text-decoration: underline;
+        }
         .logo {
             display: flex;
             justify-content: center;
@@ -122,8 +160,23 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo" style="position: relative;">
-            <a href="https://jvinlopez.github.io/excellix/" style="position: absolute; top: 0; left: 0; text-decoration: none; color: white; font-size: 24px;" title="Home">🏠</a>
+        <!-- Top navigation with home and menu toggle -->
+        <div class="top-icons">
+            <a href="https://jvinlopez.github.io/excellix/" title="Home">🏠</a>
+            <a href="#" onclick="toggleMenu()" title="Menu">☰</a>
+        </div>
+        <!-- Hidden menu -->
+        <div id="menu" class="menu">
+            <ul>
+                <li><a href="https://jvinlopez.github.io/wfcalc/">Staffing Calculator</a></li>
+                <li><a href="https://jvinlopez.github.io/Demand-Forecasting/">Demand Forecasting</a></li>
+                <li><a href="https://jvinlopez.github.io/Queueing/">Queueing Theory</a></li>
+                <li><a href="https://jvinlopez.github.io/Correlation/">Design of Experiment Pearson</a></li>
+                <li><a href="https://jvinlopez.github.io/ANOVA/">Design of Experiment ANOVA</a></li>
+            </ul>
+        </div>
+        <!-- Logo -->
+        <div class="logo">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi07AbSzwmXhHr3pP8BVrkijVXYKffzIzup2hwn4nTioAU_Tfa_RG_XDAhyOcSMP2TH-bBQpyrn5INpOubCgfQgjG5dlS3VpwuYx_MmJDI5fTSNMkPa-uAuSId5axBuhZ0Alvq0ogLzpd2ifsg26o3HLD-xEsijg1TLOfi6DRvDan6Qx6yWOGisTLnGlqk/s320/Tool%20Logo%203.png" alt="Logo">
         </div>
         <h1>Regression Analysis Tool</h1>
@@ -153,7 +206,7 @@
         </table>
 
         <button class="button" onclick="performRegression()">Run Regression</button>
-        <!-- New Export to Excel button -->
+        <!-- Export to Excel button -->
         <button class="button" onclick="exportToExcel()">Export to Excel</button>
 
         <div id="results" class="results" style="display: none;">
@@ -167,6 +220,11 @@
     </div>
 
     <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
         function updateTable() {
             const variableCount = parseInt(document.getElementById('variableCount').value);
             const tableBody = document.getElementById('dataTable').querySelector('tbody');
